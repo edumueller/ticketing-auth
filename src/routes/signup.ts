@@ -38,7 +38,7 @@ router.post(
         id: user.id,
         email: user.email,
       },
-      "abcd"
+      process.env.JWT_KEY!
     );
 
     // Store in the cookie and send
