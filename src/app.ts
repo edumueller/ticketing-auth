@@ -19,7 +19,6 @@ app.use(
     secure: true,
   })
 );
-const PORT = 3000;
 
 app.use(currentUserRouter);
 app.use(signinRouter);
