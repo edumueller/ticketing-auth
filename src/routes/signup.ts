@@ -1,27 +1,29 @@
-import express, { Request, Response } from "express";
-import { body } from "express-validator";
-import { BadRequestError, validateRequest } from "@devneering/common";
-import { User } from "../models/user";
-import jwt from "jsonwebtoken";
+import express, { Request, Response } from 'express';
+import { body } from 'express-validator';
+import jwt from 'jsonwebtoken';
+import { validateRequest, BadRequestError } from '@devneering/common';
+
+import { User } from '../models/user';
 
 const router = express.Router();
 
 router.post(
-  "/api/users/signup",
+  '/api/users/signup',
   [
-    body("email").isEmail().withMessage("Email must be valid"),
-    body("password")
+    body('email').isEmail().withMessage('Email must be valid'),
+    body('password')
       .trim()
       .isLength({ min: 4, max: 20 })
-      .withMessage("Password must be between 4 and 20 characters"),
+      .withMessage('Password must be between 4 and 20 characters'),
   ],
   validateRequest,
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      throw new BadRequestError("Email in use");
+      throw new BadRequestError('Email in use');
     }
 
     const user = User.build({ email, password });
@@ -36,8 +38,10 @@ router.post(
       process.env.JWT_KEY!
     );
 
-    // Store in the cookie and send
-    req.session = { jwt: userJwt };
+    // Store it on session object
+    req.session = {
+      jwt: userJwt,
+    };
 
     res.status(201).send(user);
   }
